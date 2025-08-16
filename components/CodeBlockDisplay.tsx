@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+// ÄNDERUNG: Der Import-Pfad für den Style ist jetzt spezifischer
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
@@ -35,7 +36,6 @@ const CodeBlockDisplay: React.FC<CodeBlockDisplayProps> = ({ language, code }) =
                     )}
                 </button>
             </div>
-            {/* Hier wird der Syntax Highlighter eingesetzt */}
             <SyntaxHighlighter language={language} style={vscDarkPlus} customStyle={{ margin: 0, borderRadius: '0 0 0.5rem 0.5rem' }}>
                 {code}
             </SyntaxHighlighter>
