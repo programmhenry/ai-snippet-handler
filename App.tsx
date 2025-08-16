@@ -53,23 +53,50 @@ const App: React.FC = () => {
     useEffect(() => { saveItems(items); }, [items]);
     useEffect(() => { saveFolders(folders); }, [folders]);
     
+    // Wir bündeln die Logik zum Öffnen des Modals in einer wiederverwendbaren Funktion
+    const openAddModalWithData = useCallback((dataString: string | null) => {
+        if (!dataString) return;
+        
+        try {
+            const pendingSnippet = JSON.parse(dataString);
+            setModalInitialData({
+                text: pendingSnippet.text || '',
+                context: { url: pendingSnippet.url || '', pageTitle: pendingSnippet.title || '' }
+            });
+            setAddModalOpen(true);
+            localStorage.removeItem('snippet-to-add'); // Aufräumen
+        } catch (error) {
+            console.error("Failed to parse snippet from localStorage", error);
+            localStorage.removeItem('snippet-to-add'); // Auch bei Fehlern aufräumen
+        }
+    }, []);
+
+    // Effekt 1: Prüft EINMAL beim Laden der Seite
     useEffect(() => {
         const pendingSnippetJSON = localStorage.getItem('snippet-to-add');
         if (pendingSnippetJSON) {
-            try {
-                const pendingSnippet = JSON.parse(pendingSnippetJSON);
-                setModalInitialData({
-                    text: pendingSnippet.text || '',
-                    context: { url: pendingSnippet.url || '', pageTitle: pendingSnippet.title || '' }
-                });
-                setAddModalOpen(true);
-                localStorage.removeItem('snippet-to-add');
-            } catch (error) {
-                console.error("Failed to parse snippet from localStorage", error);
-                localStorage.removeItem('snippet-to-add');
-            }
+            openAddModalWithData(pendingSnippetJSON);
         }
-    }, []);
+    }, [openAddModalWithData]);
+
+    // NEU -> Effekt 2: Lauscht auf Änderungen, während die App läuft
+    useEffect(() => {
+        const handleStorageChange = (event: StorageEvent) => {
+            // Reagiere nur auf das richtige Item und wenn es neue Daten gibt
+            if (event.key === 'snippet-to-add' && event.newValue) {
+                openAddModalWithData(event.newValue);
+            }
+        };
+        
+        // Hänge den Listener an das Fenster an
+        window.addEventListener('storage', handleStorageChange);
+        
+        // Wichtig: Räume den Listener auf, wenn die Komponente verlassen wird
+        return () => {
+            window.removeEventListener('storage', handleStorageChange);
+        };
+    }, [openAddModalWithData]);
+
 
     const filteredItems = useMemo(() => {
         let filtered = items;
