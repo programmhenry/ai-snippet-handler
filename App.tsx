@@ -214,6 +214,9 @@ const App: React.FC = () => {
                             onSelectItem={setSelectedItem} 
                             onTagClick={handleTagClick} 
                             onToggleFavorite={toggleFavoriteStatus}
+                            searchQuery={searchQuery}
+                            activeFolderId={activeFolderId}
+                            folders={folders}
                         />
                     </div>
                 </main>

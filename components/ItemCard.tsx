@@ -19,7 +19,7 @@ const formatDate = (isoString: string) => {
     });
 };
 
-// KORREKTUR: 'return' wurde in jeder Zeile hinzugefügt
+// KORREKTUR: 'return' wurde wieder hinzugefügt
 const PlatformIcon: React.FC<{ platform: SavedItem['sourcePlatform'] }> = ({ platform }) => {
     const iconStyles = "w-5 h-5 mr-2";
     if (platform === 'ChatGPT') {
