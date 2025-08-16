@@ -1,0 +1,5 @@
+{
+  "name": "AI Chat Snippet Library",
+  "description": "An MVP application to capture, summarize, tag, and search useful replies from AI assistants. You can view your library of saved snippets or add new ones to be automatically processed by Gemini.",
+  "requestFramePermissions": []
+}
