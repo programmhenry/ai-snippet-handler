@@ -1,15 +1,19 @@
+// in components/EditItemModal.tsx
+
 import React, { useState } from 'react';
-import { SavedItem } from '../types';
+import { SavedItem, Folder } from '../types'; // <-- Folder importieren
 
 interface EditItemModalProps {
     item: SavedItem;
+    folders: Folder[]; // <-- NEU
     onClose: () => void;
     onUpdateItem: (updatedItem: SavedItem) => void;
 }
 
-const EditItemModal: React.FC<EditItemModalProps> = ({ item, onClose, onUpdateItem }) => {
+const EditItemModal: React.FC<EditItemModalProps> = ({ item, folders, onClose, onUpdateItem }) => {
     const [summary, setSummary] = useState(item.summary);
-    const [tags, setTags] = useState(item.tags.join(', ')); // Wandelt Array in einen String um
+    const [tags, setTags] = useState(item.tags.join(', '));
+    const [folderId, setFolderId] = useState(item.folderId || 'none'); // <-- NEU
     const [error, setError] = useState<string | null>(null);
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -22,8 +26,8 @@ const EditItemModal: React.FC<EditItemModalProps> = ({ item, onClose, onUpdateIt
         const updatedItem: SavedItem = {
             ...item,
             summary: summary,
-            // Wandelt den String zurück in ein Array, entfernt Leerzeichen und leere Tags
             tags: tags.split(',').map(tag => tag.trim()).filter(Boolean),
+            folderId: folderId === 'none' ? null : folderId, // <-- NEU
         };
 
         onUpdateItem(updatedItem);
@@ -57,6 +61,21 @@ const EditItemModal: React.FC<EditItemModalProps> = ({ item, onClose, onUpdateIt
                                 className="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md"
                             />
                         </div>
+                        {/* --- NEUES FOLDER DROPDOWN --- */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Folder</label>
+                            <select
+                                value={folderId}
+                                onChange={(e) => setFolderId(e.target.value)}
+                                className="w-full p-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md"
+                            >
+                                <option value="none">No Folder</option>
+                                {folders.map(folder => (
+                                    <option key={folder.id} value={folder.id}>{folder.name}</option>
+                                ))}
+                            </select>
+                        </div>
+                        {/* ------------------------- */}
                         {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
                     </div>
 

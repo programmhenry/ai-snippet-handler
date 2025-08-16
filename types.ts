@@ -1,7 +1,13 @@
 // in types.ts
 
-export interface SavedItem {
+export interface Folder {
   id: string;
+  name: string;
+  timestamp: string;
+}
+
+export interface SavedItem {
+  id:string;
   text: string;
   markdown: string;
   summary: string;
@@ -10,10 +16,11 @@ export interface SavedItem {
   images: string[];
   model: string;
   url: string;
-  pageTitle: string; 
+  pageTitle: string;
   timestamp: string;
   sourcePlatform: 'ChatGPT' | 'Gemini' | 'Other';
-  isFavorite?: boolean; // <-- NEU: Für Favoriten
+  isFavorite?: boolean;
+  folderId?: string | null; // <-- NEU: ID des Ordners, zu dem das Snippet gehört
 }
 
 export interface CodeBlock {

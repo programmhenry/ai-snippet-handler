@@ -19,7 +19,7 @@ const formatDate = (isoString: string) => {
     });
 };
 
-// KORREKTUR 1: 'React.FC' korrekt implementiert mit explizitem 'return'
+// KORREKTUR: 'return' wurde in jeder Zeile hinzugefügt
 const PlatformIcon: React.FC<{ platform: SavedItem['sourcePlatform'] }> = ({ platform }) => {
     const iconStyles = "w-5 h-5 mr-2";
     if (platform === 'ChatGPT') {
@@ -31,7 +31,6 @@ const PlatformIcon: React.FC<{ platform: SavedItem['sourcePlatform'] }> = ({ pla
     return <span className={iconStyles} title="Other">❔</span>;
 };
 
-
 const ItemCard: React.FC<ItemCardProps> = ({ item, onSelect, onTagClick, onToggleFavorite }) => {
     
     const handleFavoriteClick = (e: React.MouseEvent) => {
@@ -39,16 +38,22 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onSelect, onTagClick, onToggl
         onToggleFavorite(item.id);
     }
     
-    // KORREKTUR 2: Event-Objekt wird nicht mehr benötigt, nur der Tag-String
     const handleTagClick = (e: React.MouseEvent, tag: string) => {
         e.stopPropagation();
         onTagClick(tag);
     }
 
+    const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
+        e.dataTransfer.setData("snippetId", item.id);
+        e.dataTransfer.effectAllowed = "move";
+    };
+
     return (
         <div 
             className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-5 cursor-pointer hover:shadow-lg hover:ring-2 hover:ring-blue-500 transition-all duration-200"
             onClick={onSelect}
+            draggable="true"
+            onDragStart={handleDragStart}
         >
             <div className="flex justify-between items-start mb-2">
                 <p className="text-gray-800 dark:text-gray-200 font-semibold pr-4">{item.summary}</p>
@@ -57,7 +62,6 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, onSelect, onTagClick, onToggl
                 </button>
             </div>
             <div className="flex flex-wrap gap-2 mb-3">
-                {/* Die Weitergabe der Funktion wird vereinfacht */}
                 {item.tags.map(tag => <Tag key={tag} label={tag} onClick={(clickedTag) => handleTagClick(event as unknown as React.MouseEvent, clickedTag)} />)}
             </div>
             <div className="flex justify-between items-center text-xs text-gray-500 dark:text-gray-400 pt-3 border-t border-gray-200 dark:border-gray-700">
