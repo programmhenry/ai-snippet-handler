@@ -1,11 +1,11 @@
 import React from 'react';
 import { SavedItem } from '../types';
 import Tag from './Tag';
-import CodeBlockDisplay from './CodeBlockDisplay';
 
 // NEUE IMPORTE
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import rehypeHighlight from 'rehype-highlight'; // Das neue Highlighting-Plugin
 
 interface ItemDetailModalProps {
     item: SavedItem;
@@ -52,31 +52,18 @@ const ItemDetailModal: React.FC<ItemDetailModalProps> = ({ item, onClose, onDele
                     </div>
                 </div>
 
-                {/* --- HIER PASSIERT DIE MAGIE --- */}
+                {/* --- HIER DIE NEUE, SAUBERE ANZEIGE --- */}
                 <div className="p-6 overflow-y-auto">
                     <h3 className="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-200">Full Content</h3>
                     <div className="prose prose-sm dark:prose-invert max-w-none">
                         <ReactMarkdown
                             children={item.text}
                             remarkPlugins={[remarkGfm]}
-                            components={{
-                                code(props) {
-                                    const {children, className, node, ...rest} = props
-                                    const match = /language-(\w+)/.exec(className || '')
-                                    const codeText = String(children).replace(/\n$/, '')
-                                    return match ? (
-                                        <CodeBlockDisplay language={match[1]} code={codeText} />
-                                    ) : (
-                                        <code {...rest} className={className}>
-                                        {children}
-                                        </code>
-                                    )
-                                }
-                            }}
+                            rehypePlugins={[rehypeHighlight]} // Hier wird das neue Plugin aktiviert
                         />
                     </div>
                 </div>
-                {/* --- ENDE DER MAGIE --- */}
+                {/* --- ENDE --- */}
 
                 <div className="p-4 bg-gray-50 dark:bg-gray-700/50 flex justify-end items-center gap-4 rounded-b-lg border-t border-gray-200 dark:border-gray-700">
                     <button onClick={handleDelete} className="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md">
